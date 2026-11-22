@@ -434,6 +434,15 @@ def run_download_thread(params):
                         current_download["step_label"] = "Étape 2/2 : Téléchargement Audio"
                     else:
                         current_download["step_label"] = "Étape 1/2 : Téléchargement Vidéo HD"
+                elif '[Merger]' in line_str or 'Merging formats' in line_str:
+                    current_download["status"] = "merging"
+                    current_download["step_label"] = "Fusion Vidéo + Audio en cours..."
+                    current_download["speed"] = "Écriture disque"
+                    current_download["eta"] = "En cours"
+                    current_download["logs"].append("[System] Téléchargements terminés ! Fusion finale des flux vidéo et audio en cours (FFmpeg)...")
+                elif 'Deleting original file' in line_str:
+                    current_download["step_label"] = "Finalisation du fichier..."
+                    current_download["logs"].append("[System] Nettoyage et validation du fichier MP4 final...")
 
                 # Analyse de la progression : [download]  45.2% of  7.54GiB at 9.86MiB/s ETA 00:03:15
                 match_pct = re.search(r'\[download\]\s+([\d\.]+)%', line_str)

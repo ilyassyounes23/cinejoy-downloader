@@ -332,11 +332,24 @@ document.addEventListener('DOMContentLoaded', () => {
                     terminalBody.scrollTop = terminalBody.scrollHeight;
                 }
 
-                // Statut Conversion / Muxing
-                if (data.status === 'converting') {
+                // Statut Fusion Video + Audio ou Conversion
+                if (data.status === 'merging') {
+                    dlStatusBadge.textContent = "⚡ Fusion Vidéo + Audio en cours (FFmpeg)...";
+                    dlStatusBadge.style.background = 'rgba(59, 130, 246, 0.2)';
+                    dlStatusBadge.style.color = '#60a5fa';
+                    progressBarFill.classList.add('merging-active');
+                    statPercent.textContent = "Fusion en cours...";
+                    statSpeed.textContent = data.speed || "Écriture disque";
+                    statEta.textContent = data.eta || "En cours";
+                } else if (data.status === 'converting') {
                     dlStatusBadge.textContent = data.step_label || "Assemblage final...";
                     dlStatusBadge.style.background = 'rgba(245, 158, 11, 0.2)';
                     dlStatusBadge.style.color = '#f59e0b';
+                    progressBarFill.classList.add('merging-active');
+                    statPercent.textContent = "Assemblage...";
+                    if (data.speed) statSpeed.textContent = data.speed;
+                } else {
+                    progressBarFill.classList.remove('merging-active');
                 }
 
                 // Fin du téléchargement
