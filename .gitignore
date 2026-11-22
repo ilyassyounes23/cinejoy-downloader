@@ -1,0 +1,27 @@
+# ==========================================
+# Dossier des vidéos téléchargées (PERSONNEL)
+# ==========================================
+_VIDEOS_TELECHARGEES/*
+!_VIDEOS_TELECHARGEES/.gitkeep
+
+# ==========================================
+# Binaires dépassant la limite GitHub (100 Mo)
+# Téléchargés automatiquement par setup_tools.py
+# ==========================================
+bin/ffmpeg.exe
+bin/ffprobe.exe
+bin/node.exe
+bin/ffmpeg_temp.zip
+
+# ==========================================
+# Fichiers caches et temporaires
+# ==========================================
+__pycache__/
+*.pyc
+*.pyo
+*.pyd.old
+.pytest_cache/
+Thumbs.db
+.DS_Store
+*.tmp
+*.downloading

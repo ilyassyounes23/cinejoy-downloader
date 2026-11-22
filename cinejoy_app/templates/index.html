@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CineJoy Downloader Pro - Interface Graphique</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="background-glow glow-1"></div>
+    <div class="background-glow glow-2"></div>
+
+    <div class="app-container">
+        <!-- HEADER -->
+        <header class="app-header">
+            <div class="brand">
+                <div class="logo-box">
+                    <svg class="logo-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                    </svg>
+                </div>
+                <div>
+                    <h1 class="brand-title">CineJoy <span>Downloader Pro</span></h1>
+                    <p class="brand-subtitle">Extracteur m3u8 • Choix Qualité & Audio • Sous-titres VOSTFR</p>
+                </div>
+            </div>
+
+            <div class="header-actions">
+                <button id="btn-open-folder-header" class="btn-secondary" title="Ouvrir le dossier des vidéos">
+                    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
+                    </svg>
+                    <span>Dossier Téléchargements</span>
+                </button>
+            </div>
+        </header>
+
+        <!-- SEARCH / URL INPUT -->
+        <section class="card input-section">
+            <label for="url-input" class="input-label">
+                <span class="label-badge">Étape 1</span> Collez le lien CineJoy ou flux .m3u8
+            </label>
+            <div class="input-group">
+                <div class="input-icon-box">
+                    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+                        <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+                    </svg>
+                </div>
+                <input 
+                    type="text" 
+                    id="url-input" 
+                    placeholder="https://cinejoy.pk/watch/movie/1311031 ou flux .m3u8 direct..." 
+                    autocomplete="off"
+                    spellcheck="false"
+                >
+                <button id="btn-paste" class="btn-icon" title="Coller depuis le presse-papier">
+                    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path>
+                        <rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect>
+                    </svg>
+                </button>
+                <button id="btn-analyze" class="btn-primary">
+                    <span class="btn-text">Analyser le flux</span>
+                    <span class="btn-loader spinner hidden"></span>
+                </button>
+            </div>
+
+            <!-- EXEMPLES RAPIDES -->
+            <div class="examples-row">
+                <span class="examples-title">Exemple rapide :</span>
+                <button class="pill-btn" data-url="https://cinejoy.pk/watch/movie/1311031">
+                    🔥 Demon Slayer: Infinity Castle
+                </button>
+            </div>
+        </section>
+
+        <!-- NOTIFICATION / ERREUR -->
+        <div id="alert-box" class="alert hidden">
+            <span id="alert-message"></span>
+        </div>
+
+        <!-- RESULTAT DE L'ANALYSE -->
+        <section id="result-section" class="card result-section hidden">
+            <!-- BANNIERE FILM / SERIE -->
+            <div class="media-banner">
+                <img id="media-poster" class="media-poster" src="" alt="Poster">
+                <div class="media-info">
+                    <div class="media-header-tags">
+                        <span id="media-badge" class="badge badge-accent">Film</span>
+                        <span id="media-year" class="badge badge-subtle">2025</span>
+                    </div>
+                    <h2 id="media-title" class="media-title">Demon Slayer: Infinity Castle</h2>
+                    <p id="media-overview" class="media-overview"></p>
+                    <div class="stream-url-tag">
+                        <span class="stream-label">Flux détecté :</span>
+                        <code id="stream-url-text">https://lightspeed.st/.../master.m3u8</code>
+                    </div>
+                </div>
+            </div>
+
+            <div class="selection-grid">
+                <!-- CHOIX DE LA QUALITÉ -->
+                <div class="selection-col">
+                    <h3 class="col-title">
+                        <span class="col-number">1</span> Choisissez la qualité d'image
+                    </h3>
+                    <div id="qualities-list" class="options-list">
+                        <!-- Rempli dynamiquement -->
+                    </div>
+                </div>
+
+                <!-- CHOIX DE L'AUDIO -->
+                <div class="selection-col">
+                    <h3 class="col-title">
+                        <span class="col-number">2</span> Langue audio
+                    </h3>
+                    <div id="audio-list" class="options-list">
+                        <!-- Rempli dynamiquement -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- CHOIX DES SOUS-TITRES -->
+            <div class="subtitles-section">
+                <h3 class="col-title">
+                    <span class="col-number">3</span> Sous-titres disponibles (VOSTFR)
+                </h3>
+                <div class="subtitles-controls">
+                    <select id="subtitles-select" class="custom-select">
+                        <option value="">Aucun sous-titre (Version originale seule)</option>
+                    </select>
+
+                    <label class="checkbox-label" id="embed-sub-container">
+                        <input type="checkbox" id="embed-sub-checkbox" checked>
+                        <span>Incruster les sous-titres dans la vidéo MP4 (FFmpeg)</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- ACTION TELECHARGER -->
+            <div class="action-footer">
+                <div class="dest-info">
+                    <span class="dest-label">Dossier de destination :</span>
+                    <span class="dest-path" title="{{ output_dir }}">{{ output_dir }}</span>
+                </div>
+                <button id="btn-download" class="btn-download">
+                    <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.5">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                        <polyline points="7 10 12 15 17 10"></polyline>
+                        <line x1="12" y1="15" x2="12" y2="3"></line>
+                    </svg>
+                    <span>Lancer le téléchargement</span>
+                </button>
+            </div>
+        </section>
+
+        <!-- MONITEUR DE TÉLÉCHARGEMENT EN DIRECT -->
+        <section id="download-section" class="card download-section hidden">
+            <div class="download-header">
+                <div>
+                    <h2 class="download-title">Téléchargement en cours</h2>
+                    <p id="dl-filename" class="download-subtitle">Nom_Du_Fichier.mp4</p>
+                </div>
+                <div id="dl-status-badge" class="badge badge-progress">Téléchargement 0%</div>
+            </div>
+
+            <!-- BARRE DE PROGRESSION -->
+            <div class="progress-bar-container">
+                <div id="progress-bar-fill" class="progress-bar-fill" style="width: 0%;"></div>
+            </div>
+
+            <!-- STATISTIQUES EN TEMPS RÉEL -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <span class="stat-label">Progression</span>
+                    <span id="stat-percent" class="stat-value">0.0 %</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-label">Vitesse</span>
+                    <span id="stat-speed" class="stat-value">0.00 MiB/s</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-label">Taille totale</span>
+                    <span id="stat-size" class="stat-value">-- GiB</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-label">Temps restant (ETA)</span>
+                    <span id="stat-eta" class="stat-value">--:--</span>
+                </div>
+            </div>
+
+            <!-- CONSOLE TERMINAL EN DIRECT (STYLE CMD) -->
+            <div class="terminal-container">
+                <div class="terminal-header">
+                    <div class="terminal-dots">
+                        <span class="dot dot-red"></span>
+                        <span class="dot dot-yellow"></span>
+                        <span class="dot dot-green"></span>
+                    </div>
+                    <span class="terminal-title">Journal d'exécution yt-dlp & ffmpeg (Direct)</span>
+                    <button id="btn-toggle-terminal" class="terminal-toggle">Masquer</button>
+                </div>
+                <div id="terminal-body" class="terminal-body">
+                    <div class="term-line term-system">[System] Prêt pour le téléchargement...</div>
+                </div>
+            </div>
+
+            <!-- ACTIONS DE FIN DE TÉLÉCHARGEMENT -->
+            <div id="dl-finished-actions" class="finished-actions hidden">
+                <div class="success-banner">
+                    <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2.5">
+                        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                        <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                    </svg>
+                    <span>Téléchargement terminé avec succès ! Votre vidéo est prête.</span>
+                </div>
+                <div class="finished-buttons">
+                    <button id="btn-open-file" class="btn-primary">
+                        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+                            <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                        </svg>
+                        <span>Lire la vidéo maintenant</span>
+                    </button>
+                    <button id="btn-open-folder" class="btn-secondary">
+                        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
+                        </svg>
+                        <span>Ouvrir dans l'Explorateur</span>
+                    </button>
+                    <button id="btn-new-download" class="btn-subtle">
+                        <span>Télécharger une autre vidéo</span>
+                    </button>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <script src="/static/app.js"></script>
+</body>
+</html>

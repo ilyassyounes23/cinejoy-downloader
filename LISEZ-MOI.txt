@@ -1,0 +1,36 @@
+===================================================================
+               CINEJOY DOWNLOADER PRO - VERSION COMPLETE
+===================================================================
+
+Cette application est 100% autonome et portable :
+Elle ne nécessite aucune installation (aucun logiciel, aucun Python, aucun Node.js requis).
+Tout le nécessaire est déjà inclus dans ce dossier.
+
+-------------------------------------------------------------------
+COMMENT L'UTILISER (EN 1 SEUL CLIC) :
+-------------------------------------------------------------------
+
+1. Double-cliquez sur le fichier :
+   👉 LANCER_APPLICATION.bat
+
+2. Votre navigateur Web (Edge, Chrome, etc.) s'ouvre automatiquement sur :
+   http://localhost:5000
+
+3. Collez l'adresse du film ou de la série (exemple : lien CineJoy ou lien .m3u8)
+   puis cliquez sur "Analyser le flux".
+
+4. Choisissez votre résolution (1080p, 720p, etc.), votre piste audio
+   et vos sous-titres (VOSTFR).
+
+5. Cliquez sur "Lancer le téléchargement" !
+   Vous verrez la barre de progression et le journal en direct.
+
+6. À la fin, vos fichiers sont enregistrés dans le dossier :
+   👉 _VIDEOS_TELECHARGEES (dans ce même dossier)
+
+-------------------------------------------------------------------
+ASTUCES :
+-------------------------------------------------------------------
+- Laissez la petite fenêtre noire ouverte pendant que vous utilisez l'application.
+- Pour fermer l'application quand vous avez fini : fermez simplement la fenêtre noire.
+===================================================================
