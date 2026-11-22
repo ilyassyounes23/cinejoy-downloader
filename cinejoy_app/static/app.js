@@ -334,7 +334,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 // Statut Conversion / Muxing
                 if (data.status === 'converting') {
-                    dlStatusBadge.textContent = "Assemblage final / Sous-titres...";
+                    dlStatusBadge.textContent = data.step_label || "Assemblage final...";
                     dlStatusBadge.style.background = 'rgba(245, 158, 11, 0.2)';
                     dlStatusBadge.style.color = '#f59e0b';
                 }

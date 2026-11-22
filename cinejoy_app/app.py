@@ -394,7 +394,7 @@ def run_download_thread(params):
     cmd = [
         YT_DLP_BIN,
         '--newline',
-        '-N', '5',
+        '-N', '8',
         '-f', format_spec,
         '-o', out_template,
         '--merge-output-format', 'mp4'
@@ -481,28 +481,62 @@ def run_download_thread(params):
                     sub_file.write_bytes(s_res.read())
                 current_download["logs"].append(f"[System] Sous-titres enregistrés : {sub_file.name}")
 
-                # Incrustation / Muxing avec ffmpeg si activé
+                # Incrustation / Muxing avec ffmpeg si explicitement activé
                 final_video = DOWNLOADS_DIR / f"{clean_title}.mp4"
                 if embed_sub and final_video.exists():
-                    current_download["logs"].append("[System] Incrustation des sous-titres dans le conteneur MP4...")
+                    current_download["logs"].append("[System] Incrustation FFmpeg en cours dans le fichier MP4...")
                     muxed_video = DOWNLOADS_DIR / f"{clean_title}_temp_sub.mp4"
                     
                     ffmpeg_cmd = [
-                        FFMPEG_BIN, '-y',
+                        FFMPEG_BIN, '-y', '-nostdin',
                         '-i', str(final_video),
                         '-i', str(sub_file),
+                        '-map', '0',
+                        '-map', '1:0',
                         '-c', 'copy',
                         '-c:s', 'mov_text',
                         '-metadata:s:s:0', f'language={sub_lang}',
                         str(muxed_video)
                     ]
-                    mux_proc = subprocess.run(ffmpeg_cmd, capture_output=True, text=True)
-                    if mux_proc.returncode == 0 and muxed_video.exists():
-                        final_video.unlink()
-                        muxed_video.rename(final_video)
-                        current_download["logs"].append("[System] Sous-titres intégrés avec succès !")
-                    else:
-                        current_download["logs"].append(f"[Warning] Muxing ffmpeg ignoré : {mux_proc.stderr[:200]}")
+                    
+                    try:
+                        mux_proc = subprocess.Popen(
+                            ffmpeg_cmd,
+                            stdout=subprocess.PIPE,
+                            stderr=subprocess.STDOUT,
+                            text=True,
+                            bufsize=1,
+                            universal_newlines=True
+                        )
+                        last_log_time = 0
+                        for line in mux_proc.stdout:
+                            line_str = line.strip()
+                            if not line_str:
+                                continue
+                            match_time = re.search(r'time=([\d:.]+)', line_str)
+                            match_spd = re.search(r'speed=\s*([\d.]+x)', line_str)
+                            now = time.time()
+                            if match_time and (now - last_log_time > 1.2):
+                                last_log_time = now
+                                spd_val = match_spd.group(1) if match_spd else "rapide"
+                                with download_lock:
+                                    current_download["step_label"] = f"Assemblage sous-titres ({match_time.group(1)} à {spd_val})"
+                                    current_download["speed"] = spd_val
+                                    current_download["logs"].append(f"[FFmpeg] Assemblage : position {match_time.group(1)} (vitesse {spd_val})")
+                                    if len(current_download["logs"]) > 200:
+                                        current_download["logs"] = current_download["logs"][-200:]
+                        
+                        mux_proc.wait()
+                        if mux_proc.returncode == 0 and muxed_video.exists():
+                            final_video.unlink()
+                            muxed_video.rename(final_video)
+                            current_download["logs"].append("[System] Sous-titres intégrés dans le MP4 avec succès !")
+                        else:
+                            current_download["logs"].append(f"[Warning] Muxing ffmpeg code {mux_proc.returncode}, sous-titres conservés en fichier .srt séparé.")
+                    except Exception as fe:
+                        current_download["logs"].append(f"[Warning] Erreur muxing ffmpeg : {fe}")
+                else:
+                    current_download["logs"].append("[System] Sous-titres conservés en fichier .srt séparé (Instantané & 100% compatible tous lecteurs) !")
             except Exception as se:
                 current_download["logs"].append(f"[Warning] Erreur sous-titres : {se}")
 
