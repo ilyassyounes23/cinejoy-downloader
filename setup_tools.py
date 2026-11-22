@@ -2,6 +2,7 @@ import os
 import sys
 import shutil
 import zipfile
+import subprocess
 import urllib.request
 from pathlib import Path
 
@@ -50,7 +51,22 @@ def ensure_tools():
     print("      Vérification et installation des composants requis")
     print("=" * 60)
 
-    # 1. yt-dlp
+    # 1. Vérification des dépendances Python
+    try:
+        import flask
+        import flask_cors
+        print("[✓] Dépendances Python (Flask, Flask-Cors) prêtes.")
+    except ImportError:
+        print("[+] Installation des dépendances Python requises...")
+        req_file = ROOT_DIR / "requirements.txt"
+        if req_file.exists():
+            try:
+                subprocess.check_call([sys.executable, "-m", "pip", "install", "-r", str(req_file)])
+                print("[✓] Dépendances Python installées avec succès.")
+            except Exception as e:
+                print(f"[!] Avertissement : impossible d'installer les dépendances via pip : {e}")
+
+    # 2. yt-dlp
     yt_dlp_exe = BIN_DIR / "yt-dlp.exe"
     if not yt_dlp_exe.is_file() and not shutil.which("yt-dlp"):
         url = "https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp.exe"
@@ -61,7 +77,7 @@ def ensure_tools():
     else:
         print("[✓] yt-dlp est prêt.")
 
-    # 2. node.exe
+    # 3. node.exe
     node_exe = BIN_DIR / "node.exe"
     if not node_exe.is_file() and not shutil.which("node"):
         url = "https://nodejs.org/dist/v20.18.0/win-x64/node.exe"
@@ -72,7 +88,7 @@ def ensure_tools():
     else:
         print("[✓] Node.js est prêt.")
 
-    # 3. FFmpeg & FFprobe
+    # 4. FFmpeg & FFprobe
     ffmpeg_exe = BIN_DIR / "ffmpeg.exe"
     ffprobe_exe = BIN_DIR / "ffprobe.exe"
     if (not ffmpeg_exe.is_file() or not ffprobe_exe.is_file()) and not (shutil.which("ffmpeg") and shutil.which("ffprobe")):

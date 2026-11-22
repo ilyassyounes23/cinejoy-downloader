@@ -16,7 +16,7 @@ if not exist "%PYTHON_EXE%" (
     set "PYTHON_EXE=python"
 )
 
-:: Vérification automatique si les outils vidéo sont présents dans bin
+REM Verification et telechargement automatique des outils
 if not exist "%BIN_DIR%\ffmpeg.exe" (
     echo [INFO] Premier lancement detecte : preparation automatique des composants...
     "%PYTHON_EXE%" "%ROOT_DIR%setup_tools.py"
@@ -41,7 +41,11 @@ echo  (Laissez cette fenetre ouverte pendant vos telechargements)
 echo ========================================================
 echo.
 
-cd /d "%APP_DIR%"
-"%PYTHON_EXE%" app.py
+if exist "%ROOT_DIR%app.py" (
+    "%PYTHON_EXE%" "%ROOT_DIR%app.py"
+) else (
+    cd /d "%APP_DIR%"
+    "%PYTHON_EXE%" app.py
+)
 
 pause
